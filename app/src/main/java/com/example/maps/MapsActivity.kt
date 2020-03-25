@@ -16,6 +16,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
 import java.util.jar.Manifest
 
@@ -80,7 +81,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
      */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        mMap.mapType = GoogleMap.MAP_TYPE_NORMAL
+        //mMap.mapType = GoogleMap.MAP_TYPE_NORMAL
+
+        val exitoCambioMapa = mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.estilo_mapa))
+
+        if (!exitoCambioMapa) {
+            // Mencionar que hubo un problema al cambio de mapa
+        }
 
         if (validarPersimisosUbicacion()) {
             obtenerUbicacion()
