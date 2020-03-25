@@ -32,6 +32,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     private var callback: LocationCallback? = null
 
     // Marcadores del mapa
+    private var listaMarcadores:ArrayList<Marker>? = null
 
     private var marcadorGolden:Marker? = null
     private var marcadorPiramides:Marker? = null
@@ -115,11 +116,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
         mMap.setOnMarkerClickListener(this)
 
+        prepararMarcadores()
+
         if (validarPersimisosUbicacion()) {
             obtenerUbicacion()
         }
         else {
             pedirPermisos()
+        }
+    }
+
+    private fun prepararMarcadores() {
+        listaMarcadores = ArrayList()
+        mMap.setOnMapLongClickListener {
+            location: LatLng? ->
+            listaMarcadores?.add(mMap.addMarker(MarkerOptions().position(location!!).title("Golden Gate").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)).alpha(0.3f)))
         }
     }
 
