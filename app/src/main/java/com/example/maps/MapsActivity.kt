@@ -19,7 +19,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import java.util.jar.Manifest
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMarkerDragListener {
 
     private lateinit var mMap: GoogleMap
 
@@ -115,6 +115,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         marcadorTorre?.tag = 0
 
         mMap.setOnMarkerClickListener(this)
+        mMap.setOnMarkerDragListener(this)
 
         prepararMarcadores()
 
@@ -130,7 +131,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         listaMarcadores = ArrayList()
         mMap.setOnMapLongClickListener {
             location: LatLng? ->
-            listaMarcadores?.add(mMap.addMarker(MarkerOptions().position(location!!).title("Golden Gate").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)).alpha(0.3f)))
+            listaMarcadores?.add(mMap.addMarker(MarkerOptions().position(location!!).title("Golden Gate").icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_tren)).alpha(0.3f)))
+            listaMarcadores?.last()!!.isDraggable = true
         }
     }
 
@@ -213,5 +215,22 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         }
 
         return false
+    }
+
+    override fun onMarkerDragEnd(marcador: Marker?) {
+        Toast.makeText(this, "Terminó de mover el marcador", Toast.LENGTH_SHORT).show()
+        Log.d("MARCADOR_FINAL", marcador?.position?.latitude.toString())
+    }
+
+    override fun onMarkerDragStart(marcador: Marker?) {
+        Toast.makeText(this, "Empenzando a mover el marcador", Toast.LENGTH_SHORT).show()
+        Log.d("MARCADOR_INICIAL", marcador?.position?.latitude.toString())
+
+        val index = listaMarcadores?.indexOf(marcador!!)
+        Log.d("MARCADOR_INICIAL", listaMarcadores?.get(index!!)!!.position?.latitude.toString())
+    }
+
+    override fun onMarkerDrag(marcador: Marker?) {
+        title = "${marcador?.position?.latitude} - ${marcador?.position?.longitude}"
     }
 }
