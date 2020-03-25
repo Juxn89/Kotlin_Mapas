@@ -46,8 +46,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             override fun onLocationResult(locationResult: LocationResult?) {
                 super.onLocationResult(locationResult)
 
-                for (ubicacion in locationResult?.locations!!) {
-                    if (mMap != null) {
+                if (mMap != null) {
+                    for (ubicacion in locationResult?.locations!!) {
+
+                        mMap.isMyLocationEnabled = true
+                        mMap.uiSettings.isMyLocationButtonEnabled = true
+
                         //Toast.makeText(applicationContext, "${ubicacion.latitude}, ${ubicacion.longitude}", Toast.LENGTH_SHORT).show()
                         val sydney = LatLng(ubicacion.latitude, ubicacion.longitude)
                         mMap.addMarker(MarkerOptions().position(sydney).title("Aquí estoy"))
@@ -76,6 +80,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
      */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        mMap.mapType = GoogleMap.MAP_TYPE_NORMAL
 
         if (validarPersimisosUbicacion()) {
             obtenerUbicacion()
