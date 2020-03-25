@@ -16,10 +16,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import java.util.jar.Manifest
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
@@ -101,13 +98,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         val PIRAMIDES = LatLng(29.9772962, 31.1324955)
         val TORRE_PISA = LatLng(43.722952, 10.396597)
 
-        marcadorGolden = mMap.addMarker(MarkerOptions().position(GOLDEN_GATE).title("Golden Gate"))
+        marcadorGolden = mMap.addMarker(MarkerOptions().position(GOLDEN_GATE).title("Golden Gate").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)).alpha(0.3f))
         marcadorGolden?.tag = 0
 
-        marcadorPiramides = mMap.addMarker(MarkerOptions().position(PIRAMIDES).title("Pirámides"))
+        marcadorPiramides = mMap.addMarker(MarkerOptions().position(PIRAMIDES).title("Pirámides").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)).alpha(0.6f))
         marcadorPiramides?.tag = 0
 
-        marcadorTorre = mMap.addMarker(MarkerOptions().position(TORRE_PISA).title("Torre de Pisa"))
+        marcadorTorre = mMap.addMarker(MarkerOptions()
+            .position(TORRE_PISA)
+            .title("Torre de Pisa")
+            //.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+            .icon(BitmapDescriptorFactory.fromResource(R.drawable.tren_1))
+            .snippet("Metro de Torre de Pisa")
+            .alpha(0.9f))
         marcadorTorre?.tag = 0
 
         mMap.setOnMarkerClickListener(this)
