@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -17,10 +18,11 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import java.util.jar.Manifest
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private lateinit var mMap: GoogleMap
 
@@ -31,6 +33,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private var fusedLocationClient: FusedLocationProviderClient? = null
     private var locationRequest: LocationRequest? = null
     private var callback: LocationCallback? = null
+
+    // Marcadores del mapa
+
+    private var marcadorGolden:Marker? = null
+    private var marcadorPiramides:Marker? = null
+    private var marcadorTorre:Marker? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,6 +96,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         if (!exitoCambioMapa) {
             // Mencionar que hubo un problema al cambio de mapa
         }
+
+        val GOLDEN_GATE = LatLng(37.8199286, -122.4782551)
+        val PIRAMIDES = LatLng(29.9772962, 31.1324955)
+        val TORRE_PISA = LatLng(43.722952, 10.396597)
+
+        marcadorGolden = mMap.addMarker(MarkerOptions().position(GOLDEN_GATE).title("Golden Gate"))
+        marcadorGolden?.tag = 0
+
+        marcadorPiramides = mMap.addMarker(MarkerOptions().position(PIRAMIDES).title("Pirámides"))
+        marcadorPiramides?.tag = 0
+
+        marcadorTorre = mMap.addMarker(MarkerOptions().position(TORRE_PISA).title("Torre de Pisa"))
+        marcadorTorre?.tag = 0
+
+        mMap.setOnMarkerClickListener(this)
 
         if (validarPersimisosUbicacion()) {
             obtenerUbicacion()
@@ -163,5 +186,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun detenerActualizacionUbicacion() {
         fusedLocationClient?.removeLocationUpdates(callback)
+    }
+
+    override fun onMarkerClick(marcador: Marker?): Boolean {
+        var numeroClicks = marcador?.tag as? Int
+
+        if(numeroClicks != null){
+            numeroClicks++
+            marcador?.tag = numeroClicks
+
+            Toast.makeText(this, "Se han dado ${numeroClicks} clicks", Toast.LENGTH_SHORT).show()
+        }
+
+        return false
     }
 }
