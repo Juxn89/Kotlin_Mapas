@@ -9,6 +9,10 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.ColorInt
 import androidx.core.app.ActivityCompat
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -56,15 +60,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 super.onLocationResult(locationResult)
 
                 if (mMap != null) {
+                    mMap.isMyLocationEnabled = true
+                    mMap.uiSettings.isMyLocationButtonEnabled = true
+
                     for (ubicacion in locationResult?.locations!!) {
+                        Toast.makeText(applicationContext, "${ubicacion.latitude}, ${ubicacion.longitude}", Toast.LENGTH_SHORT).show()
 
-                        mMap.isMyLocationEnabled = true
-                        mMap.uiSettings.isMyLocationButtonEnabled = true
-
-                        //Toast.makeText(applicationContext, "${ubicacion.latitude}, ${ubicacion.longitude}", Toast.LENGTH_SHORT).show()
-                        val sydney = LatLng(ubicacion.latitude, ubicacion.longitude)
-                        mMap.addMarker(MarkerOptions().position(sydney).title("Aquí estoy"))
-                        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+                        val miPosicion = LatLng(ubicacion.latitude, ubicacion.longitude)
+                        mMap.addMarker(MarkerOptions().position(miPosicion).title("Aquí estoy"))
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(miPosicion))
                     }
                 }
             }
@@ -274,5 +278,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
     override fun onMarkerDrag(marcador: Marker?) {
         title = "${marcador?.position?.latitude} - ${marcador?.position?.longitude}"
+    }
+
+    private fun cargarURL(url:String){
+        val queue = Volley.newRequestQueue(this)
+        val solicitud = StringRequest(Request.Method.GET, url, Response.Listener<String>{
+            response ->
+            Log.d("HTTP", response)
+        }, Response.ErrorListener {
+
+        })
     }
 }
