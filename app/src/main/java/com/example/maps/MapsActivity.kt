@@ -44,6 +44,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     private var marcadorPiramides:Marker? = null
     private var marcadorTorre:Marker? = null
 
+    private var miPosicion:LatLng? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
@@ -66,8 +68,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                     for (ubicacion in locationResult?.locations!!) {
                         Toast.makeText(applicationContext, "${ubicacion.latitude}, ${ubicacion.longitude}", Toast.LENGTH_SHORT).show()
 
-                        val miPosicion = LatLng(ubicacion.latitude, ubicacion.longitude)
-                        mMap.addMarker(MarkerOptions().position(miPosicion).title("Aquí estoy"))
+                        miPosicion = LatLng(ubicacion.latitude, ubicacion.longitude)
+                        mMap.addMarker(MarkerOptions().position(miPosicion!!).title("Aquí estoy"))
                         mMap.moveCamera(CameraUpdateFactory.newLatLng(miPosicion))
                     }
                 }
@@ -179,6 +181,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             location: LatLng? ->
             listaMarcadores?.add(mMap.addMarker(MarkerOptions().position(location!!).title("Golden Gate").icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_tren)).alpha(0.3f)))
             listaMarcadores?.last()!!.isDraggable = true
+
+            val coordenadas = LatLng(listaMarcadores?.last()!!.position.latitude, listaMarcadores?.last()!!.position.longitude)
+            cargarURL("https://maps.googleapis.com/maps/api/directions/json?origin=${miPosicion?.latitude},${miPosicion?.longitude}&destination=${coordenadas.latitude},${coordenadas.longitude}&sensor=false&mode=driving")
         }
     }
 
@@ -281,6 +286,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     }
 
     private fun cargarURL(url:String){
+        Log.d("URL_GOOGLE", url)
+
         val queue = Volley.newRequestQueue(this)
         val solicitud = StringRequest(Request.Method.GET, url, Response.Listener<String>{
             response ->
@@ -288,5 +295,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         }, Response.ErrorListener {
 
         })
+
+        queue.add(solicitud)
     }
 }
