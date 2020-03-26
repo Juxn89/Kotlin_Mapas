@@ -110,18 +110,25 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             .add(LatLng(12.150251, -86.309109))
             .add(LatLng(12.149790, -86.310759))
             .add(LatLng(12.148343, -86.310641))
-            .color(R.color.colorPrimary)
+            .color(Color.WHITE)
+            .pattern(arrayListOf<PatternItem>(Dot(), Gap(20f)))
 
         val polyGon = PolygonOptions()
             .add(LatLng(12.151512, -86.309442))
             .add(LatLng(12.150251, -86.309109))
             .add(LatLng(12.149790, -86.310759))
             .add(LatLng(12.148343, -86.310641))
+            .fillColor(Color.RED)
+            .strokePattern(arrayListOf<PatternItem>(Dash(10f), Gap(20f)))
+            .strokeColor(Color.YELLOW)
+            .fillColor(Color.GREEN)
+            .strokeWidth(10f)
+
 
         val circle = CircleOptions()
             .center(LatLng(12.151512, -86.309442))
             .radius(120.0)
-            .fillColor(R.color.colorAccent)
+            .fillColor(Color.CYAN)
 
         mMap.addPolyline(polyLine)
         mMap.addPolygon(polyGon)
