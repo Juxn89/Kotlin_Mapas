@@ -2,10 +2,12 @@ package com.example.maps
 
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.ColorInt
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -87,14 +89,59 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
      */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+
+        cambiarEstiloMapa()
+        marcadoresEstaticos()
+        crearListener()
+        prepararMarcadores()
+        dibujarLineas()
+
+        if (validarPersimisosUbicacion()) {
+            obtenerUbicacion()
+        }
+        else {
+            pedirPermisos()
+        }
+    }
+
+    private fun dibujarLineas() {
+        val polyLine = PolylineOptions()
+            .add(LatLng(12.151512, -86.309442))
+            .add(LatLng(12.150251, -86.309109))
+            .add(LatLng(12.149790, -86.310759))
+            .add(LatLng(12.148343, -86.310641))
+            .color(R.color.colorPrimary)
+
+        val polyGon = PolygonOptions()
+            .add(LatLng(12.151512, -86.309442))
+            .add(LatLng(12.150251, -86.309109))
+            .add(LatLng(12.149790, -86.310759))
+            .add(LatLng(12.148343, -86.310641))
+
+        val circle = CircleOptions()
+            .center(LatLng(12.151512, -86.309442))
+            .radius(120.0)
+            .fillColor(R.color.colorAccent)
+
+        mMap.addPolyline(polyLine)
+        mMap.addPolygon(polyGon)
+        mMap.addCircle(circle)
+    }
+
+    private fun cambiarEstiloMapa() {
         //mMap.mapType = GoogleMap.MAP_TYPE_NORMAL
-
         val exitoCambioMapa = mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.estilo_mapa))
-
         if (!exitoCambioMapa) {
             // Mencionar que hubo un problema al cambio de mapa
         }
+    }
 
+    private fun crearListener() {
+        mMap.setOnMarkerClickListener(this)
+        mMap.setOnMarkerDragListener(this)
+    }
+
+    private fun marcadoresEstaticos() {
         val GOLDEN_GATE = LatLng(37.8199286, -122.4782551)
         val PIRAMIDES = LatLng(29.9772962, 31.1324955)
         val TORRE_PISA = LatLng(43.722952, 10.396597)
@@ -113,18 +160,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             .snippet("Metro de Torre de Pisa")
             .alpha(0.9f))
         marcadorTorre?.tag = 0
-
-        mMap.setOnMarkerClickListener(this)
-        mMap.setOnMarkerDragListener(this)
-
-        prepararMarcadores()
-
-        if (validarPersimisosUbicacion()) {
-            obtenerUbicacion()
-        }
-        else {
-            pedirPermisos()
-        }
     }
 
     private fun prepararMarcadores() {
